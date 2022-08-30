@@ -51,7 +51,7 @@ export const authWindow: Adapter = (config) => {
 
             loginWindow.webContents.on('did-navigate', (event, href) => {
                 const location = url.parse(href);
-                if (location.href == config.auth0.redirectUri) {
+                if (location.href.replace((location.search || ""), "") == config.auth0.redirectUri) {
                     const query = qs.parse(location.search || '', {ignoreQueryPrefix: true});
                     resolve(query.code);
                     loginWindow.destroy();
