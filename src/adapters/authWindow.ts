@@ -62,6 +62,10 @@ export const authWindow: Adapter = (config) => {
                 reject();
             });
 
+            loginWindow.on('page-title-updated', (event) => {
+                event.preventDefault();
+            });
+
             loginWindow.loadURL(authCodeUrl);
         }),
 
@@ -78,6 +82,10 @@ export const authWindow: Adapter = (config) => {
             logoutWindow.webContents.on('did-navigate', () => {
                 logoutWindow.destroy();
                 resolve();
+            });
+
+            logoutWindow.on('page-title-updated', (event) => {
+                event.preventDefault();
             });
 
             logoutWindow.loadURL(`https://${config.auth0.domain}/v2/logout`);
