@@ -98,6 +98,22 @@ export async function isLoggedIn (ctx: Context) {
 }
 
 /**
+ * Check whether a refresh token exists
+ */
+ export async function hasRefreshToken (ctx: Context) {
+    const {
+        refreshTokens
+    } = ctx;
+
+    if (!refreshTokens) {
+        return false;
+    };
+
+    const refreshToken = await refreshTokens.get();
+    return !!refreshToken;
+}
+
+/**
  * Manually start a login flow.
  * If you just want a token, use getToken(), which will log in only if we don't have a token available.
  */

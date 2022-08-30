@@ -16,6 +16,13 @@ Returns an ID token you can use.
 
 If one not available, tries using refresh tokens, then launches the login screen.
 
+## hasRefreshToken
+
+`hasRefreshToken(): Promise<string>`
+
+Returns whether a refresh token exists (the user has logged in before). It may or may not be valid.
+
+
 ## isLoggedIn
 
 `isLoggedIn(): boolean`

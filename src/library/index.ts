@@ -8,6 +8,7 @@ export function library (adapter: Adapter, config: Config) {
     return {
         getToken:   applyCtx(Operations.getToken),
         getIDToken:   applyCtx(Operations.getIDToken),
+        hasRefreshToken: applyCtx(Operations.hasRefreshToken),
         isLoggedIn: applyCtx(Operations.isLoggedIn),
         login:      applyCtx(Operations.login),
         logout:     applyCtx(Operations.logout)
