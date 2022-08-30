@@ -1,6 +1,6 @@
 # Electron Auth0 Login
 
-Enables Auth0 login within your Electron application, using proof-key-for-code-exchange (PKCE)
+Enables Auth0 login within your Electron application, using proof-key-for-code-exchange (PKCE). Slightly modified by Tim McBride (`mcbridet`) to support custom redirect URI's and ID tokens.
 
 - 🔒 Uses the industry-standard PKCE flow, as [recommended](https://auth0.com/docs/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce) by Auth0 for native apps
 - 🎿 Easy setup and a simple promise-based API
@@ -58,7 +58,6 @@ yarn add electron-auth0-login
 Set up an application in the Auth0 console:
 
 - create a `native` application (not `machine-to-machine`)
-- set up an "Allowed callback URL" for `https://{your auth0 domain}/mobile`
 
 Create a file called `auth.ts`/`auth.js`:
 

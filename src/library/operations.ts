@@ -46,6 +46,51 @@ export async function getToken (ctx: Context): Promise<string> {
 }
 
 /**
+ * Return a usable ID token or, failing that, try to get a new one
+ * You should use this whenever you want to auth e.g. an API request
+ */
+ export async function getIDToken (ctx: Context): Promise<string> {
+    const {
+        authAPI,
+        logger: {
+            warn,
+            debug
+        },
+        tokens,
+        refreshTokens
+    } = ctx;
+
+    debug('Retrieving token from store');
+    const token = await tokens.get();
+
+    if (token && tokens.expiresIn() > 60) {
+        debug('Using fresh token from store');
+        return token.id_token;
+    }
+
+    if (refreshTokens) {
+        debug('Falling back to refresh token');
+        const refreshToken = await refreshTokens.get();
+
+        if (refreshToken) {
+            try {
+                debug('Attempting to use refresh token');
+                const token = await authAPI.exchangeRefreshToken(refreshToken);
+                await tokens.set(token);
+                return token.id_token;
+
+            } catch (err) {
+                warn(`Could not use refresh token, may have been revoked`);
+                await refreshTokens.delete();
+            }
+        }
+    }
+
+    debug('No valid token or refresh token available; starting new login flow');
+    return login(ctx);
+}
+
+/**
  * Check whether we are logged in
  */
 export async function isLoggedIn (ctx: Context) {
@@ -74,7 +119,7 @@ export async function login (ctx: Context): Promise<string> {
 
     debug('Received token from Auth0');
 
-    const { access_token, refresh_token } = token;
+    const { id_token, refresh_token } = token;
 
     if (refreshTokens) {
         if (refresh_token) {
@@ -88,7 +133,7 @@ export async function login (ctx: Context): Promise<string> {
     await tokens.set(token);
     debug('Login successful');
 
-    return access_token;
+    return id_token;
 }
 
 /**

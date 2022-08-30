@@ -7,7 +7,6 @@ You're advised to begin with the [Quick Start](README.md#-quick-start-guide-gett
 You must configure an application in Auth0 before users can log into it. There are a couple of requirements here:
 
 1. It must be set up as a 'native' application, not 'machine to machine'
-2. It must have an 'allowed callback URL' of your auth0 domain + `/mobile`
 
 ## Initialising the library
 
@@ -35,8 +34,8 @@ export type Config = {
         audience: string,
         clientId: string,
         domain: string,
-        // This will be custom to your application, e.g. 'given_name profile'
         scopes: string
+        redirectUri: string
     },
 
     // Customise the login

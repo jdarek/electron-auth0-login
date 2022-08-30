@@ -8,6 +8,14 @@ Returns an authorization token you can use against an Auth0-secured API.
 
 If one not available, tries using refresh tokens, then launches the login screen.
 
+## getIdToken
+
+`getIdToken(): Promise<string>`
+
+Returns an ID token you can use.
+
+If one not available, tries using refresh tokens, then launches the login screen.
+
 ## isLoggedIn
 
 `isLoggedIn(): boolean`

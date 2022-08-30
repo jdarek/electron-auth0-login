@@ -38,6 +38,7 @@ export type PKCEPair = {
 
 export type TokenResponse = {
     access_token: string,
+    id_token: string,
     expires_in: number
     scope: string,
     refresh_token?: string
@@ -56,6 +57,7 @@ export type Config = {
         domain: string,
         // This will be custom to your application, e.g. 'given_name profile'
         scopes: string
+        redirectUri: string
     },
 
     // Customise the login

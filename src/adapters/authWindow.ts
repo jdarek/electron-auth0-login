@@ -37,7 +37,7 @@ export const authWindow: Adapter = (config) => {
                 client_id: config.auth0.clientId,
                 code_challenge: pair.challenge,
                 code_challenge_method: 'S256',
-                redirect_uri: `https://${config.auth0.domain}/mobile`,
+                redirect_uri: config.auth0.redirectUri,
                 // Custom parameters
                 ...config.login?.authorizeParams
             });
@@ -51,7 +51,7 @@ export const authWindow: Adapter = (config) => {
 
             loginWindow.webContents.on('did-navigate', (event, href) => {
                 const location = url.parse(href);
-                if (location.pathname == '/mobile') {
+                if (location.href == config.auth0.redirectUri) {
                     const query = qs.parse(location.search || '', {ignoreQueryPrefix: true});
                     resolve(query.code);
                     loginWindow.destroy();
