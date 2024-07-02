@@ -14,33 +14,69 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authAPI = void 0;
 const got_1 = __importDefault(require("got"));
+const process_1 = __importDefault(require("process"));
+const hpagent_1 = require("hpagent");
 const framework_1 = require("../framework");
 const authAPI = (config) => framework_1.context('authAPI', {
     /**
      * After receiving auth code, use second half of PKCE pair to get a token (PKCE second leg)
      */
     exchangeAuthCode: (authCode, pair) => __awaiter(void 0, void 0, void 0, function* () {
-        return got_1.default.post(`https://${config.auth0.domain}/oauth/token`, {
-            json: {
-                grant_type: 'authorization_code',
-                client_id: config.auth0.clientId,
-                code_verifier: pair.verifier,
-                code: authCode,
-                redirect_uri: config.auth0.redirectUri
+        return new Promise((resolve, reject) => {
+            let proxyServer = null;
+            for (const val of process_1.default.argv) {
+                if (val.startsWith("--proxy-server=")) {
+                    proxyServer = val.split("=")[1];
+                }
             }
-        }).json();
+            resolve(got_1.default.post(`https://${config.auth0.domain}/oauth/token`, {
+                json: {
+                    grant_type: 'authorization_code',
+                    client_id: config.auth0.clientId,
+                    code_verifier: pair.verifier,
+                    code: authCode,
+                    redirect_uri: config.auth0.redirectUri
+                },
+                agent: proxyServer ? {
+                    https: new hpagent_1.HttpsProxyAgent({
+                        keepAlive: true,
+                        keepAliveMsecs: 1000,
+                        maxSockets: 256,
+                        maxFreeSockets: 256,
+                        proxy: "http://" + proxyServer
+                    })
+                } : {}
+            }).json());
+        });
     }),
     /**
      * Used to restore login state for persistent login
      */
     exchangeRefreshToken: (refreshToken) => __awaiter(void 0, void 0, void 0, function* () {
-        return got_1.default.post(`https://${config.auth0.domain}/oauth/token`, {
-            json: {
-                grant_type: 'refresh_token',
-                client_id: config.auth0.clientId,
-                refresh_token: refreshToken
+        return new Promise((resolve, reject) => {
+            let proxyServer = null;
+            for (const val of process_1.default.argv) {
+                if (val.startsWith("--proxy-server=")) {
+                    proxyServer = val.split("=")[1];
+                }
             }
-        }).json();
+            resolve(got_1.default.post(`https://${config.auth0.domain}/oauth/token`, {
+                json: {
+                    grant_type: 'refresh_token',
+                    client_id: config.auth0.clientId,
+                    refresh_token: refreshToken
+                },
+                agent: proxyServer ? {
+                    https: new hpagent_1.HttpsProxyAgent({
+                        keepAlive: true,
+                        keepAliveMsecs: 1000,
+                        maxSockets: 256,
+                        maxFreeSockets: 256,
+                        proxy: "http://" + proxyServer
+                    })
+                } : {}
+            }).json());
+        });
     })
 });
 exports.authAPI = authAPI;
