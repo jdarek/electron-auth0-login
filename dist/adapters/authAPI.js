@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authAPI = void 0;
 const got_1 = __importDefault(require("got"));
-const process_1 = __importDefault(require("process"));
 const hpagent_1 = require("hpagent");
 const framework_1 = require("../framework");
 const authAPI = (config) => framework_1.context('authAPI', {
@@ -24,10 +23,8 @@ const authAPI = (config) => framework_1.context('authAPI', {
     exchangeAuthCode: (authCode, pair) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
             let proxyServer = null;
-            for (const val of process_1.default.argv) {
-                if (val.startsWith("--proxy-server=")) {
-                    proxyServer = val.split("=")[1];
-                }
+            if (process.env.http_proxy) {
+                proxyServer = process.env.http_proxy;
             }
             resolve(got_1.default.post(`https://${config.auth0.domain}/oauth/token`, {
                 json: {
@@ -43,7 +40,7 @@ const authAPI = (config) => framework_1.context('authAPI', {
                         keepAliveMsecs: 1000,
                         maxSockets: 256,
                         maxFreeSockets: 256,
-                        proxy: "http://" + proxyServer
+                        proxy: proxyServer
                     })
                 } : {}
             }).json());
@@ -55,10 +52,8 @@ const authAPI = (config) => framework_1.context('authAPI', {
     exchangeRefreshToken: (refreshToken) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
             let proxyServer = null;
-            for (const val of process_1.default.argv) {
-                if (val.startsWith("--proxy-server=")) {
-                    proxyServer = val.split("=")[1];
-                }
+            if (process.env.http_proxy) {
+                proxyServer = process.env.http_proxy;
             }
             resolve(got_1.default.post(`https://${config.auth0.domain}/oauth/token`, {
                 json: {
@@ -72,7 +67,7 @@ const authAPI = (config) => framework_1.context('authAPI', {
                         keepAliveMsecs: 1000,
                         maxSockets: 256,
                         maxFreeSockets: 256,
-                        proxy: "http://" + proxyServer
+                        proxy: proxyServer
                     })
                 } : {}
             }).json());

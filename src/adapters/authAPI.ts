@@ -1,5 +1,4 @@
 import got from 'got';
-import process from "process";
 import { HttpsProxyAgent } from 'hpagent';
 import { Adapter } from '../types';
 import { context } from '../framework';
@@ -11,10 +10,8 @@ export const authAPI: Adapter = (config) => context('authAPI', {
     exchangeAuthCode: async (authCode, pair) =>
         new Promise((resolve, reject) => {
             let proxyServer = null;
-            for (const val of process.argv) {
-                if (val.startsWith("--proxy-server=")) {
-                    proxyServer = val.split("=")[1];
-                }
+            if (process.env.http_proxy) {
+                proxyServer = process.env.http_proxy;
             }
             resolve(got.post(`https://${config.auth0.domain}/oauth/token`, {
                 json: {
@@ -30,7 +27,7 @@ export const authAPI: Adapter = (config) => context('authAPI', {
                         keepAliveMsecs: 1000,
                         maxSockets: 256,
                         maxFreeSockets: 256,
-                        proxy: "http://" + proxyServer
+                        proxy: proxyServer
                     })
                 } : {}
             }).json())
@@ -42,10 +39,8 @@ export const authAPI: Adapter = (config) => context('authAPI', {
     exchangeRefreshToken: async (refreshToken) => 
         new Promise((resolve, reject) => {
             let proxyServer = null;
-            for (const val of process.argv) {
-                if (val.startsWith("--proxy-server=")) {
-                    proxyServer = val.split("=")[1];
-                }
+            if (process.env.http_proxy) {
+                proxyServer = process.env.http_proxy;
             }
             resolve(got.post(`https://${config.auth0.domain}/oauth/token`, {
                 json: {
@@ -59,7 +54,7 @@ export const authAPI: Adapter = (config) => context('authAPI', {
                         keepAliveMsecs: 1000,
                         maxSockets: 256,
                         maxFreeSockets: 256,
-                        proxy: "http://" + proxyServer
+                        proxy: proxyServer
                     })
                 } : {}
             }).json())
